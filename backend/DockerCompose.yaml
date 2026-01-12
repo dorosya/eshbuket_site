@@ -1,0 +1,25 @@
+services: 
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+    env_file:
+      - .env
+  tests: 
+    build: 
+      context: .
+      dockerfile: Dockerfile.tests
+    depends_on:
+      - backend
+    environment:
+        - BACKEND_URL=http://backend:8080
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
