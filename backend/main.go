@@ -1,17 +1,15 @@
 package main
 
 import (
+	DB "eshbuket/database"
 	"eshbuket/handlers"
-	"eshbuket/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	DB.Connect()
 	router := gin.Default()
-	router.POST("/login", handlers.LoginHandler)
-	router.POST("/orders", handlers.OrdersHandler)
-	router.POST("/products", middleware.AuthMiddleware, handlers.ProductsHandler)
-	router.GET("/products", handlers.ProductsHandler)
+	handlers.RegisterRoutes(router)
 	router.Run()
 }
