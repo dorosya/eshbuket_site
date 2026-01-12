@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -43,5 +44,6 @@ func LoginHandler(c *gin.Context) {
 		return
 	}
 
+	c.JSON(http.StatusOK, gin.H{"message": "Авторизирован успешно"})
 	return
 }

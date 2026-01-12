@@ -1,0 +1,14 @@
+services: 
+  backend:
+    - image: o
+  postgres:
+   
+
+
+networks:
+  app-network:
+    name: myapp-network
+    driver: bridge
+    # ipam:
+    #   config:
+    #     - subnet: 172.20.0.0/16
