@@ -1,10 +1,12 @@
 package handlers
 
-import "time"
+import (
+	"time"
+)
 
 type Session struct {
 	Username string
 	Expires  time.Time
 }
 
-var sessions = make(map[string]Session)
+var Sessions = make(map[string]Session)

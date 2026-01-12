@@ -11,11 +11,9 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var sessions = make(map[string]handlers.Session)
-
-func CreateSession(c *gin.Context, req handlers.LoginRequest) string {
+func createSession(c *gin.Context, req handlers.LoginRequest) string {
 	var sessionID = uuid.NewString()
-	sessions[sessionID] = handlers.Session{
+	handlers.Sessions[sessionID] = handlers.Session{
 		Username: req.Login,
 		Expires:  time.Now().Add(1 * time.Hour),
 	}
@@ -52,6 +50,16 @@ func LoginHandler(c *gin.Context) {
 		return
 	}
 
-	// sessionID := CreateSession(c, req)
+	sessionID := createSession(c, req)
+
+	c.SetCookie(
+		"session_id",
+		sessionID,
+		3600, // время жизни в секундах
+		"/",
+		"",   // домен
+		true, // Secure (только HTTPS)
+		true, // HttpOnly
+	)
 	c.JSON(http.StatusOK, gin.H{"message": "Авторизирован успешно"})
 }
