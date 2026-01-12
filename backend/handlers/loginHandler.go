@@ -32,18 +32,16 @@ func LoginHandler(c *gin.Context) {
 	админ панель.*/
 	Storedhash := os.Getenv("ADMIN_PASSWORD_HASH")
 	Adminlogin := os.Getenv("ADMIN_LOGIN")
-	login := c.Params.ByName("login")
-	if login != Adminlogin {
+
+	if req.Login != Adminlogin {
 		c.JSON(401, "Неверно введен логин и/или пароль")
 	}
-	pass := c.Params.ByName("password")
-	err := bcrypt.CompareHashAndPassword([]byte(Storedhash), []byte(pass))
 
+	err := bcrypt.CompareHashAndPassword([]byte(Storedhash), []byte(req.Password))
 	if err != nil {
 		c.JSON(401, "Неверно введен пароль")
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Авторизирован успешно"})
-	return
 }
