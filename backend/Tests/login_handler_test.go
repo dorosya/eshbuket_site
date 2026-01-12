@@ -7,7 +7,7 @@ import (
 	"os"
 	"testing"
 
-	"eshbuket/handlers" // поменяй на свой модуль
+	"eshbuket/handlers"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -24,7 +24,6 @@ func TestLoginHandler(t *testing.T) {
 	os.Setenv("ADMIN_PASSWORD_HASH", string(hash))
 	os.Setenv("ADMIN_LOGIN", "admin")
 
-	// Регистрируем handler
 	router.POST("/api/login", handlers.LoginHandler)
 
 	// --- Тест: успешный логин ---

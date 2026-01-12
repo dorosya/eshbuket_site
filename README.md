@@ -6,7 +6,7 @@
 
 ---
 
-## ⚙️ Функциональность
+## Функциональность
 
 ### Backend (API):
 - Авторизация администратора (`POST /api/login`)  
@@ -31,7 +31,7 @@
 
 ---
 
-## 🚀 Запуск проекта через Docker Compose
+## Запуск проекта через Docker Compose
 
 1. Склонируйте репозиторий и перейдите в папку backend:
 
@@ -48,7 +48,7 @@ ADMIN_PASSWORD_HASH=$2a$10$...
 
 3. Поднимите контейнеры:
 ```
-docker-compose -f DockerCompose.yaml up --build
+docker-compose -f http_tests_docker-compose.yaml up --build
 ```
 backend будет слушать 8080 внутри Docker-сети
 
