@@ -1,21 +1,30 @@
 package handlers
 
 import (
+	handlers "eshbuket/handlers/structures"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
-type LoginRequest struct {
-	Login    string `json:"login"`
-	Password string `json:"password"`
+var sessions = make(map[string]handlers.Session)
+
+func CreateSession(c *gin.Context, req handlers.LoginRequest) string {
+	var sessionID = uuid.NewString()
+	sessions[sessionID] = handlers.Session{
+		Username: req.Login,
+		Expires:  time.Now().Add(1 * time.Hour),
+	}
+	return sessionID
 }
 
 // POST /api/login - логин для админки
 func LoginHandler(c *gin.Context) {
-	var req LoginRequest
+	var req handlers.LoginRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(400, gin.H{"error": "invalid request"})
@@ -43,5 +52,6 @@ func LoginHandler(c *gin.Context) {
 		return
 	}
 
+	// sessionID := CreateSession(c, req)
 	c.JSON(http.StatusOK, gin.H{"message": "Авторизирован успешно"})
 }
