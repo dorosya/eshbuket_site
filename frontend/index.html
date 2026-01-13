@@ -1,78 +1,34 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>eshbuket — admin</title>
-  <link rel="stylesheet" href="/static/styles.css" />
+  <title>Eshbuket Admin</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <h1>eshbuket</h1>
-      <p class="muted">Минимальная админка: товары + изображения</p>
-    </header>
+  <h1>Eshbuket – управление товарами</h1>
 
-    <section class="card">
-      <h2>Создать товар</h2>
-      <form id="createProductForm">
-        <div class="grid">
-          <label>
-            Название
-            <input name="name" required placeholder="Товар A" />
-          </label>
-          <label>
-            Цена
-            <input name="price" required placeholder="100" />
-          </label>
-          <label>
-            Категория
-            <input name="category" placeholder="cat1" />
-          </label>
-        </div>
-        <button type="submit">Создать</button>
-        <span id="createProductMsg" class="msg"></span>
-      </form>
-      <p class="muted small">
-        Примечание: POST /api/products защищён middleware (но у тебя auth сейчас отключён в TestMode).
-      </p>
-    </section>
+  <section>
+    <h2>Создать товар</h2>
+    <input id="name" placeholder="Название" />
+    <input id="price" placeholder="Цена" type="number" />
+    <input id="category" placeholder="Категория" />
+    <button onclick="createProduct()">Создать</button>
+  </section>
 
-    <section class="card">
-      <h2>Загрузить изображение</h2>
-      <form id="uploadImageForm">
-        <div class="grid">
-          <label>
-            Товар
-            <select name="productId" id="productSelect" required></select>
-          </label>
-          <label>
-            Файл
-            <input type="file" name="image" accept="image/*" required />
-          </label>
-        </div>
-        <button type="submit">Загрузить</button>
-        <span id="uploadMsg" class="msg"></span>
-      </form>
-      <p class="muted small">
-        Лимит: 10MB. Поддержка: jpg/jpeg/png/webp.
-      </p>
-    </section>
+  <section>
+    <h2>Товары</h2>
+    <ul id="products"></ul>
+  </section>
 
-    <section class="card">
-      <div class="row">
-        <h2>Товары</h2>
-        <button id="refreshBtn" type="button">Обновить</button>
-      </div>
-      <div id="products" class="products"></div>
-      <span id="listMsg" class="msg"></span>
-    </section>
+  <section>
+    <h2>Загрузить изображение</h2>
+    <input id="productId" placeholder="ID товара" />
+    <input id="image" type="file" />
+    <button onclick="uploadImage()">Загрузить</button>
+    <div id="preview"></div>
+  </section>
 
-    <footer class="muted small">
-      <div>API: <code>/api/products</code>, <code>/api/products/:id/image</code></div>
-    </footer>
-  </div>
-
-  <script src="/static/app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -28,14 +29,17 @@ func main() {
 	}
 
 	router := gin.Default()
-	gin.SetMode(gin.TestMode) //Тестмод для проходки тестов на Post /api/products (для отключения авторизации)
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+
+	router.Use(cors.New(config))
+	// gin.SetMode(gin.TestMode) //Тестмод для проходки тестов на Post /api/products (для отключения авторизации)
 	handlers.RegisterRoutes(router)
 
-	// Minimal frontend
-	router.Static("/static", "./frontend")
-	router.GET("/", func(c *gin.Context) {
-		c.File("./frontend/index.html")
-	})
-
+	// Подгрузка фронтенда через
+	// router.Static("/static", "./frontend")
+	// router.GET("/", func(c *gin.Context) {
+	// 	c.File("./frontend/index.html")
+	// })
 	router.Run()
 }

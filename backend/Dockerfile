@@ -1,16 +1,23 @@
-FROM golang:1.25.1-alpine
+FROM golang:1.25.1-alpine AS builder
 
 WORKDIR /app
 
-COPY go.mod go.sum ./
-RUN go mod tidy
+COPY ./go.mod ./go.sum ./
+RUN go mod download
 
 COPY . .
-RUN go build -v -o /app/server /app/main.go
+
+# COPY frontend ./frontend
+
+RUN go build -v -o server main.go
 
 
-FROM alpine
-WORKDIR /small
-COPY --from=0 /app/server ./binary
-COPY --from=0 /app/frontend ./frontend
-ENTRYPOINT [ "./binary" ] 
+FROM alpine:latest
+
+WORKDIR /app
+
+COPY --from=builder /app/server ./server
+# COPY --from=builder /app/frontend ./frontend
+
+EXPOSE 8080
+ENTRYPOINT ["./server"]
