@@ -32,12 +32,13 @@ func Connect(dbHost string, dbPort string, dbUser string, dbPassword string, dbN
 }
 
 func InitSchema(db *sql.DB) error {
-	_, err := db.Exec(`
+		_, err := db.Exec(`
 		CREATE TABLE IF NOT EXISTS products (
 			id SERIAL PRIMARY KEY,
 			name TEXT NOT NULL,
 			price NUMERIC NOT NULL,
-			category TEXT
+			category TEXT,
+			image_path TEXT
 		);
 
 		CREATE TABLE IF NOT EXISTS orders (
@@ -46,7 +47,6 @@ func InitSchema(db *sql.DB) error {
 			comment TEXT,
 			total_price NUMERIC NOT NULL
 		);
-
 
 		CREATE TABLE IF NOT EXISTS order_products (
 			order_id INT REFERENCES orders(id) ON DELETE CASCADE,

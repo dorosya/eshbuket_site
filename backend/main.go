@@ -30,5 +30,12 @@ func main() {
 	router := gin.Default()
 	gin.SetMode(gin.TestMode) //Тестмод для проходки тестов на Post /api/products (для отключения авторизации)
 	handlers.RegisterRoutes(router)
+
+	// Minimal frontend
+	router.Static("/static", "./frontend")
+	router.GET("/", func(c *gin.Context) {
+		c.File("./frontend/index.html")
+	})
+
 	router.Run()
 }

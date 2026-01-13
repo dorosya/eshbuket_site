@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
 	db "eshbuket/database"
 	handlers "eshbuket/handlers/structures"
 	"net/http"
@@ -19,9 +20,9 @@ func ProductsHandler(c *gin.Context) {
 		var rows *sql.Rows
 		var err error
 		if category != "" {
-			rows, err = db.DB.Query("SELECT id, name, price, category FROM products WHERE category = $1", category)
+			rows, err = db.DB.Query("SELECT id, name, price, category, image_path FROM products WHERE category = $1", category)
 		} else {
-			rows, err = db.DB.Query("SELECT id, name, price, category FROM products")
+			rows, err = db.DB.Query("SELECT id, name, price, category, image_path FROM products")
 		}
 		if err != nil {
 			c.JSON(500, gin.H{"error": "db error"})
@@ -32,9 +33,13 @@ func ProductsHandler(c *gin.Context) {
 		products := []handlers.Product{}
 		for rows.Next() {
 			var p handlers.Product
-			if err := rows.Scan(&p.ID, &p.Name, &p.Price, &p.Category); err != nil {
+			var imagePath sql.NullString
+			if err := rows.Scan(&p.ID, &p.Name, &p.Price, &p.Category, &imagePath); err != nil {
 				c.JSON(500, gin.H{"error": "scan error"})
 				return
+			}
+			if imagePath.Valid && imagePath.String != "" {
+				p.ImageURL = "/api/products/" + fmt.Sprint(p.ID) + "/image"
 			}
 			products = append(products, p)
 		}

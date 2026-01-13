@@ -12,4 +12,5 @@ RUN go build -v -o /app/server /app/main.go
 FROM alpine
 WORKDIR /small
 COPY --from=0 /app/server ./binary
+COPY --from=0 /app/frontend ./frontend
 ENTRYPOINT [ "./binary" ] 
