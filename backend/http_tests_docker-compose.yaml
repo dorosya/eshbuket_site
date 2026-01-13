@@ -9,6 +9,9 @@ services:
       - app-network
     env_file:
       - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
   tests: 
     build: 
       context: .
@@ -20,9 +23,26 @@ services:
     networks:
       - app-network
 
-  postgresql::
-    build: postgres:15
+  postgres:
+    image: postgres:15
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 2s
+      retries: 10
+      start_period: 5s
 
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  postgres_data:
