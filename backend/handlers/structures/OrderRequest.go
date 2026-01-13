@@ -1,12 +1,12 @@
 package handlers
 
-// type Order struct {
-// 	Products     []Product
-// 	Contact_data string
-// 	Comment      string
-// }
+type OrderProductRequest struct {
+	ProductID int `json:"product_id" binding:"required"`
+	Quantity  int `json:"quantity" binding:"required"`
+}
 
-// type OrderRequest struct {
-// 	Contact_data string `json:"contact_data" binding:"required"`
-// 	Comment      string `json:"comment,omitempty"`
-// }
+type OrderRequest struct {
+	ContactData string                `json:"contact_data" binding:"required"`
+	Comment     string                `json:"comment"`
+	Products    []OrderProductRequest `json:"products" binding:"required,dive"`
+}

@@ -36,15 +36,23 @@ func InitSchema(db *sql.DB) error {
 		CREATE TABLE IF NOT EXISTS products (
 			id SERIAL PRIMARY KEY,
 			name TEXT NOT NULL,
-			price INT NOT NULL,
+			price NUMERIC NOT NULL,
 			category TEXT
 		);
 
 		CREATE TABLE IF NOT EXISTS orders (
 			id SERIAL PRIMARY KEY,
-			contact_phone TEXT NOT NULL,
+			contact_data TEXT NOT NULL,
 			comment TEXT,
-			product_id INT REFERENCES products(id)
+			total_price NUMERIC NOT NULL
+		);
+
+
+		CREATE TABLE IF NOT EXISTS order_products (
+			order_id INT REFERENCES orders(id) ON DELETE CASCADE,
+			product_id INT REFERENCES products(id) ON DELETE CASCADE,
+			quantity INT NOT NULL,
+			PRIMARY KEY(order_id, product_id)
 		);
 	`)
 	return err
