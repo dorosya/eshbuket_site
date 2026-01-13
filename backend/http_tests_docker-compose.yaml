@@ -20,6 +20,9 @@ services:
     networks:
       - app-network
 
+  postgresql::
+    build: postgres:15
+
 networks:
   app-network:
     driver: bridge

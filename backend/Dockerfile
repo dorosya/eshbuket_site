@@ -8,4 +8,8 @@ RUN go mod tidy
 COPY . .
 RUN go build -v -o /app/server /app/main.go
 
-CMD ["/app/server"]
+
+FROM alpine
+WORKDIR /small
+COPY --from=0 /app/server ./binary
+ENTRYPOINT [ "./binary" ] 
