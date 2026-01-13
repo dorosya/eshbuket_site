@@ -9,7 +9,7 @@ import (
 
 // Проверка сессии админки. Подключается к post login и post products.
 func AuthMiddleware(c *gin.Context) {
-	//Временная мера для пропуска тестов
+	//Временная мера для пропуска тестов. Удалить позже
 	if gin.Mode() == gin.TestMode {
 		c.Next()
 		return
