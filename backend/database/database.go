@@ -4,19 +4,13 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"os"
 
 	_ "github.com/lib/pq"
 )
 
 var DB *sql.DB
 
-func Connect() {
-	dbHost := os.Getenv("DB_HOST")
-	dbPort := os.Getenv("DB_PORT")
-	dbUser := os.Getenv("DB_USER")
-	dbPassword := os.Getenv("DB_PASSWORD")
-	dbName := os.Getenv("DB_NAME")
+func Connect(dbHost string, dbPort string, dbUser string, dbPassword string, dbName string) {
 
 	psqlInfo := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
@@ -35,4 +29,22 @@ func Connect() {
 	}
 
 	log.Println("Успешное подключение к PostgreSQL!")
+}
+
+func InitSchema(db *sql.DB) error {
+	_, err := db.Exec(`
+		CREATE TABLE IF NOT EXISTS products (
+			id SERIAL PRIMARY KEY,
+			name TEXT NOT NULL,
+			price INT NOT NULL
+		);
+
+		CREATE TABLE IF NOT EXISTS orders (
+			id SERIAL PRIMARY KEY,
+			contact_phone TEXT NOT NULL,
+			comment TEXT,
+			product_id INT REFERENCES products(id)
+		);
+	`)
+	return err
 }
