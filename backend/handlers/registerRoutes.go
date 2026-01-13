@@ -7,8 +7,11 @@ import (
 )
 
 func RegisterRoutes(router *gin.Engine) {
-	router.POST("/login", LoginHandler)
-	router.POST("/orders", OrdersHandler)
-	router.POST("/products", middleware.AuthMiddleware, ProductsHandler)
-	router.GET("/products", ProductsHandler)
+	api := router.Group("/api")
+	{
+		api.POST("/login", LoginHandler)
+		api.POST("/orders", OrdersHandler)
+		api.POST("/products", middleware.AuthMiddleware, ProductsHandler)
+		api.GET("/products", ProductsHandler)
+	}
 }

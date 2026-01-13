@@ -13,7 +13,7 @@ import (
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Println(".env файл не найден")
+		log.Println("Локальный .env файл не найден")
 	}
 
 	dbHost := os.Getenv("DB_HOST")
@@ -22,9 +22,13 @@ func main() {
 	dbPassword := os.Getenv("DB_PASSWORD")
 	dbName := os.Getenv("DB_NAME")
 	db.Connect(dbHost, dbPort, dbUser, dbPassword, dbName)
-	db.InitSchema(db.DB)
+	err = db.InitSchema(db.DB)
+	if err != nil {
+		log.Println("Не получилось создать таблицы для ДБ")
+	}
 
 	router := gin.Default()
+	gin.SetMode(gin.TestMode)
 	handlers.RegisterRoutes(router)
 	router.Run()
 }

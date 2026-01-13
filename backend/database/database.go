@@ -36,7 +36,8 @@ func InitSchema(db *sql.DB) error {
 		CREATE TABLE IF NOT EXISTS products (
 			id SERIAL PRIMARY KEY,
 			name TEXT NOT NULL,
-			price INT NOT NULL
+			price INT NOT NULL,
+			category TEXT
 		);
 
 		CREATE TABLE IF NOT EXISTS orders (
