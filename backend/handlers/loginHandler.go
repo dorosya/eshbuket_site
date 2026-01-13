@@ -11,7 +11,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func createSession(c *gin.Context, req handlers.LoginRequest) string {
+func createSession(req handlers.LoginRequest) string {
 	var sessionID = uuid.NewString()
 	handlers.Sessions[sessionID] = handlers.Session{
 		Username: req.Login,
@@ -50,7 +50,7 @@ func LoginHandler(c *gin.Context) {
 		return
 	}
 
-	sessionID := createSession(c, req)
+	sessionID := createSession(req)
 
 	c.SetCookie(
 		"session_id",

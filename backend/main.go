@@ -28,7 +28,7 @@ func main() {
 	}
 
 	router := gin.Default()
-	gin.SetMode(gin.TestMode)
+	gin.SetMode(gin.TestMode) //Тестмод для проходки тестов на Post /api/products (для отключения авторизации)
 	handlers.RegisterRoutes(router)
 	router.Run()
 }
