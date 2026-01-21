@@ -12,5 +12,5 @@ jobs:
         uses: golangci/golangci-lint-action@v9
         with:
           working-directory: backend
-          args: --skip-dirs tests
+          args: --skip-dirs ./tests
           version: v2.6
