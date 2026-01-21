@@ -8,8 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type handler 
-
 // POST /api/login - логин для админки
 func LoginHandler(c *gin.Context) {
 	var req models.LoginRequest
