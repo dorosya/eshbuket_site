@@ -8,7 +8,7 @@ services:
     networks:
       - app-network
     env_file:
-      - .env
+      - .env.tests
     depends_on:
       postgres:
         condition: service_healthy
@@ -18,10 +18,8 @@ services:
       dockerfile: Dockerfile.tests
     depends_on:
       - backend
-    environment:
-      - BACKEND_URL=http://backend:8080
     env_file:
-      - .env 
+      - .env.tests
     networks:
       - app-network
 
@@ -29,7 +27,7 @@ services:
     image: postgres:15
     restart: always
     env_file:
-      - .env
+      - .env.tests
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -38,7 +36,7 @@ services:
       - app-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
-      interval: 2s
+      interval: 5s
       retries: 10
       start_period: 5s
 
@@ -51,11 +49,11 @@ services:
   #   ports:
   #     - "5050:80"
   #   networks:
-  #     - app-network
+  #     - app-network 
 
 networks:
   app-network:
     driver: bridge
 
 volumes:
-  postgres_data:
+  postgres_data: {}

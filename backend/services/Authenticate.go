@@ -1,7 +1,7 @@
 package services
 
 import (
-	"eshbuket/models"
+	models "eshbuket/models"
 	"os"
 	"time"
 
