@@ -10,7 +10,7 @@ import (
 
 	db "eshbuket/database"
 	"eshbuket/handlers"
-	structures "eshbuket/handlers/structures"
+	structures "eshbuket/models"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"

@@ -1,28 +1,18 @@
 package handlers
 
 import (
-	handlers "eshbuket/handlers/structures"
+	"eshbuket/models"
+	"eshbuket/services"
 	"net/http"
-	"os"
-	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
-	"golang.org/x/crypto/bcrypt"
 )
 
-func createSession(req handlers.LoginRequest) string {
-	var sessionID = uuid.NewString()
-	handlers.Sessions[sessionID] = handlers.Session{
-		Username: req.Login,
-		Expires:  time.Now().Add(1 * time.Hour),
-	}
-	return sessionID
-}
+type handler 
 
 // POST /api/login - логин для админки
 func LoginHandler(c *gin.Context) {
-	var req handlers.LoginRequest
+	var req models.LoginRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(400, gin.H{"error": "invalid request"})
@@ -37,20 +27,14 @@ func LoginHandler(c *gin.Context) {
 	(в идеале redis, но думаю и в самой памяти тоже пойдет на время пока я не прикручу JWT), а так же в куки.
 	Далее при каждом запросе на данный эндпоинт идет проверка через middleware, и, в случае если сессия активна, то пользователя пропускает в
 	админ панель.*/
-	Storedhash := os.Getenv("ADMIN_PASSWORD_HASH")
-	Adminlogin := os.Getenv("ADMIN_LOGIN")
 
-	if req.Login != Adminlogin {
-		c.JSON(401, "Неверно введен логин и/или пароль")
-	}
-
-	err := bcrypt.CompareHashAndPassword([]byte(Storedhash), []byte(req.Password))
-	if err != nil {
-		c.JSON(401, "Неверно введен пароль")
+	auth := services.NewAuthService()
+	if !auth.Authenticate(req.Login, req.Password) {
+		c.JSON(401, gin.H{"error": "Неверно введен логин и/или пароль"})
 		return
 	}
 
-	sessionID := createSession(req)
+	sessionID := auth.CreateSession(req)
 
 	c.SetCookie(
 		"session_id",

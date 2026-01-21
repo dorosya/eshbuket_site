@@ -2,7 +2,7 @@ package handlers
 
 import (
 	db "eshbuket/database"
-	handlers "eshbuket/handlers/structures"
+	"eshbuket/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -10,7 +10,7 @@ import (
 
 // OrdersHandler обрабатывает POST /api/orders
 func OrdersHandler(c *gin.Context) {
-	var req handlers.OrderRequest
+	var req models.OrderRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
 		return

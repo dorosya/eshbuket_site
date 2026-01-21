@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"database/sql"
-	"fmt"
 	db "eshbuket/database"
-	handlers "eshbuket/handlers/structures"
+	"eshbuket/models"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -30,9 +30,9 @@ func ProductsHandler(c *gin.Context) {
 		}
 		defer rows.Close()
 
-		products := []handlers.Product{}
+		products := []models.Product{}
 		for rows.Next() {
-			var p handlers.Product
+			var p models.Product
 			var imagePath sql.NullString
 			if err := rows.Scan(&p.ID, &p.Name, &p.Price, &p.Category, &imagePath); err != nil {
 				c.JSON(500, gin.H{"error": "scan error"})
@@ -52,7 +52,7 @@ func ProductsHandler(c *gin.Context) {
 		c.JSON(http.StatusOK, products)
 	// Post /api/products - загрузка в БД товаров (только для админки, пропускает через authMiddleware перед обработкой )*/
 	case "POST":
-		var req handlers.ProductRequest
+		var req models.ProductRequest
 		if err := c.ShouldBindJSON(&req); err != nil {
 			c.JSON(400, gin.H{"error": "invalid request"})
 			return

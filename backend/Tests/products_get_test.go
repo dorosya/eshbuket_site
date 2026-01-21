@@ -9,7 +9,7 @@ import (
 
 	db "eshbuket/database"
 	"eshbuket/handlers"
-	structures "eshbuket/handlers/structures"
+	models "eshbuket/models"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
@@ -55,7 +55,7 @@ func TestProductsHandler(t *testing.T) {
 			t.Fatalf("Expected 200, got %d", w.Code)
 		}
 
-		var products []structures.Product
+		var products []models.Product
 		if err := json.Unmarshal(w.Body.Bytes(), &products); err != nil {
 			t.Fatalf("Failed to unmarshal response: %v", err)
 		}
@@ -74,7 +74,7 @@ func TestProductsHandler(t *testing.T) {
 			t.Fatalf("Expected 200, got %d", w.Code)
 		}
 
-		var products []structures.Product
+		var products []models.Product
 		if err := json.Unmarshal(w.Body.Bytes(), &products); err != nil {
 			t.Fatalf("Failed to unmarshal response: %v", err)
 		}
@@ -93,7 +93,7 @@ func TestProductsHandler(t *testing.T) {
 			t.Fatalf("Expected 200, got %d", w.Code)
 		}
 
-		var products []structures.Product
+		var products []models.Product
 		if err := json.Unmarshal(w.Body.Bytes(), &products); err != nil {
 			t.Fatalf("Failed to unmarshal response: %v", err)
 		}

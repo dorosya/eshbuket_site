@@ -1,4 +1,4 @@
-package handlers
+package models
 
 type ProductRequest struct {
 	Name     string `json:"name" binding:"required"`

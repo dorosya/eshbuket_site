@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	handlers "eshbuket/handlers/structures"
+	"eshbuket/models"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -22,7 +22,7 @@ func AuthMiddleware(c *gin.Context) {
 		return
 	}
 
-	session, ok := handlers.Sessions[session_id]
+	session, ok := models.Sessions[session_id]
 	//Проверка вхождения сессии в памяти программы
 	if !ok {
 		c.JSON(401, gin.H{"error": "Не авторизован"})
@@ -31,7 +31,7 @@ func AuthMiddleware(c *gin.Context) {
 	}
 	//Проверка временных данных сессии
 	if session.Expires.Before(time.Now()) {
-		delete(handlers.Sessions, session_id) //  очистка просроченной сессии
+		delete(models.Sessions, session_id) //  очистка просроченной сессии
 		c.JSON(401, gin.H{"error": "Сессия истекла"})
 		c.Abort()
 		return
