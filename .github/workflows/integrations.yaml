@@ -1,0 +1,24 @@
+name: integration-tests
+
+# on: 
+#   push:
+#     branches: [ main ]
+
+# jobs:
+#   integrations-tests:
+#     runs-on: alpine-latest
+#     defaults:
+#       run: 
+#         working-directory: ./backend
+#     steps:
+#       - name: checkout repository
+#       - uses: actions/checkout@v5
+
+#       - name: setup go
+#       - uses: actions/setup-go@v6
+#         with: 
+#           go-version: 1.25.1
+#       - run: go mod download
+
+#       - name: start docker-compose integrations tests
+#       - uses: 
