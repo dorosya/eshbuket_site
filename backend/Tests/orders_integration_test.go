@@ -56,10 +56,16 @@ func TestOrdersHandler(t *testing.T) {
 	var productIDs []int
 	for rows.Next() {
 		var id int
-		rows.Scan(&id)
+		err = rows.Scan(&id)
+		if err != nil {
+			t.Fatalf("Error on scanning rows")
+		}
 		productIDs = append(productIDs, id)
 	}
-	rows.Close()
+	err = rows.Close()
+	if err != nil {
+		t.Fatalf("Error on close rows")
+	}
 
 	t.Run("Create order with multiple products", func(t *testing.T) {
 		reqBody := structures.OrderRequest{
@@ -93,13 +99,20 @@ func TestOrdersHandler(t *testing.T) {
 		rows, _ := db.DB.Query("SELECT order_id, product_id FROM order_products")
 		for rows.Next() {
 			var o, p int
-			rows.Scan(&o, &p)
+			err = rows.Scan(&o, &p)
+			if err != nil {
+				t.Fatalf("error on scanning database")
+			}
 			t.Logf("order_product: order=%d product=%d", o, p)
 		}
 
 		// Проверяем, что order_products заполнена
 		rows, _ = db.DB.Query("SELECT product_id, quantity FROM order_products WHERE order_id=$1", int(orderID))
-		defer rows.Close()
+		defer func() {
+			if err := rows.Close(); err != nil {
+				t.Logf("Failed to close rows: %v", err)
+			}
+		}()
 
 		count := 0
 		for rows.Next() {

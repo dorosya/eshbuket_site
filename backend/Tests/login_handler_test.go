@@ -21,8 +21,12 @@ func TestLoginHandler(t *testing.T) {
 	// Подготовка environment variables для теста
 	adminPassword := "123"
 	hash, _ := bcrypt.GenerateFromPassword([]byte(adminPassword), bcrypt.DefaultCost)
-	os.Setenv("ADMIN_PASSWORD_HASH", string(hash))
-	os.Setenv("ADMIN_LOGIN", "admin")
+	if err := os.Setenv("ADMIN_PASSWORD_HASH", string(hash)); err != nil {
+		t.Fatalf("Failed to set env: %v", err)
+	}
+	if err := os.Setenv("ADMIN_LOGIN", "admin"); err != nil {
+		t.Fatalf("Failed to set env: %v", err)
+	}
 
 	router.POST("/api/login", handlers.LoginHandler)
 
