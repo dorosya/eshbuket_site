@@ -1,4 +1,4 @@
-package handlers
+package models
 
 type OrderProductRequest struct {
 	ProductID int `json:"product_id" binding:"required"`

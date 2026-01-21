@@ -29,10 +29,7 @@ func (s *authService) Authenticate(login string, password string) bool {
 	}
 
 	err := bcrypt.CompareHashAndPassword([]byte(Storedhash), []byte(password))
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
 
 func (s *authService) CreateSession(req models.LoginRequest) string {

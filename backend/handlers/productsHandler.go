@@ -5,6 +5,7 @@ import (
 	db "eshbuket/database"
 	"eshbuket/models"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -28,7 +29,11 @@ func ProductsHandler(c *gin.Context) {
 			c.JSON(500, gin.H{"error": "db error"})
 			return
 		}
-		defer rows.Close()
+		defer func() {
+			if err := rows.Close(); err != nil {
+				log.Println("Failed to close rows:", err)
+			}
+		}()
 
 		products := []models.Product{}
 		for rows.Next() {

@@ -3,6 +3,7 @@ package handlers
 import (
 	db "eshbuket/database"
 	"eshbuket/models"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -33,7 +34,10 @@ func OrdersHandler(c *gin.Context) {
 		var price int
 		err := tx.QueryRow("SELECT price FROM products WHERE id=$1", p.ProductID).Scan(&price)
 		if err != nil {
-			tx.Rollback()
+			err = tx.Rollback()
+			if err != nil {
+				log.Println("Возникла ошибка при Rollback", err)
+			}
 			c.JSON(500, gin.H{"error": "product not found"})
 			return
 		}
@@ -47,7 +51,10 @@ func OrdersHandler(c *gin.Context) {
 		req.ContactData, req.Comment, totalPrice,
 	).Scan(&orderID)
 	if err != nil {
-		tx.Rollback()
+		err = tx.Rollback()
+		if err != nil {
+			log.Println("Возникла ошибка при Rollback", err)
+		}
 		c.JSON(500, gin.H{"error": "failed to create order"})
 		return
 	}
@@ -59,13 +66,19 @@ func OrdersHandler(c *gin.Context) {
 			orderID, p.ProductID, p.Quantity,
 		)
 		if err != nil {
-			tx.Rollback()
+			err = tx.Rollback()
+			if err != nil {
+				log.Println("Возникла ошибка при Rollback", err)
+			}
 			c.JSON(500, gin.H{"error": "failed to insert order products"})
 			return
 		}
 
 	}
-	tx.Commit()
+	err = tx.Commit()
+	if err != nil {
+		log.Println("Ошибка при Commit транзакции:", err)
+	}
 	c.JSON(201, gin.H{"order_id": orderID, "total_price": totalPrice})
 
 }

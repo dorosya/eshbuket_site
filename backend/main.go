@@ -41,5 +41,7 @@ func main() {
 	// router.GET("/", func(c *gin.Context) {
 	// 	c.File("./frontend/index.html")
 	// })
-	router.Run()
+	if err := router.Run(); err != nil {
+		log.Fatal(err)
+	}
 }

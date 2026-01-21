@@ -4,6 +4,7 @@ import (
 	db "eshbuket/database"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -76,7 +77,11 @@ func UploadProductImage(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "failed to read image"})
 		return
 	}
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			log.Println("Failed to close file:", err)
+		}
+	}()
 
 	head := make([]byte, 512)
 	n, _ := file.Read(head)
@@ -89,14 +94,17 @@ func UploadProductImage(c *gin.Context) {
 	if seeker, ok := file.(io.Seeker); ok {
 		_, _ = seeker.Seek(0, io.SeekStart)
 	} else {
-		// reopen
 		_ = file.Close()
 		file, err = fileHeader.Open()
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "failed to read image"})
 			return
 		}
-		defer file.Close()
+		defer func() {
+			if err := file.Close(); err != nil {
+				log.Println("Failed to close file:", err)
+			}
+		}()
 	}
 
 	uploadDir := getUploadDir()
@@ -116,7 +124,11 @@ func UploadProductImage(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save image"})
 		return
 	}
-	defer out.Close()
+	defer func() {
+		if err := out.Close(); err != nil {
+			log.Println("Failed to close file:", err)
+		}
+	}()
 
 	lr := io.LimitReader(file, maxImageSize+1)
 	written, err := io.Copy(out, lr)
