@@ -23,7 +23,7 @@ func main() {
 	}
 
 	env := os.Getenv("APP_ENV")
-	router := models.NewRouter(models.Config{env})
+	router := models.NewRouter(models.Config{Env: env})
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
 	router.Use(cors.New(config))
