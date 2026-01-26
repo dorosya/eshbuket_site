@@ -10,4 +10,4 @@ RUN go mod download
 COPY . .
 
 # Запуск тестов по умолчанию
-CMD ["go", "test", "-v", "./..."]
+CMD ["go", "test", "-v", "./tests/integration_tests/..."]

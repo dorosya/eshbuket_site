@@ -73,8 +73,8 @@ func OrdersHandler(c *gin.Context) {
 			c.JSON(500, gin.H{"error": "failed to insert order products"})
 			return
 		}
-
 	}
+
 	err = tx.Commit()
 	if err != nil {
 		log.Println("Ошибка при Commit транзакции:", err)
