@@ -5,6 +5,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
+    expose: 
+      - "8080"
     networks:
       - app-network
     env_file:
@@ -31,6 +33,15 @@ services:
       interval: 2s
       retries: 10
       start_period: 5s
+
+  nginx:
+    build: 
+      context: ../frontend
+      dockerfile: Dockerfile
+    ports: 
+      - "80:80"
+    depends_on:
+      - backend
 
 networks:
   app-network:
