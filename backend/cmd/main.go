@@ -19,7 +19,7 @@ func main() {
 	dbName := os.Getenv("DB_NAME")
 	db := postgres.Connect(dbHost, dbPort, dbUser, dbPassword, dbName)
 
-	OrderRepo := postgres.NewOrderRepository(db)
+	OrderRepo := NewOrderRepository(db)
 	OrderService := order.NewOrderService(OrderRepo)
 	OrderHandler := handlers.NewOrderHandler(OrderService)
 
