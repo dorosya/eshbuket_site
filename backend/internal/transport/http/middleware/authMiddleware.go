@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"eshbuket/models"
+	models "eshbuket/internal/Domain"
 	"time"
 
 	"github.com/gin-gonic/gin"

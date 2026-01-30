@@ -1,4 +1,4 @@
-package models
+package dto
 
 type ProductResponse struct {
 	ID       int    `json:"id,omitempty"`

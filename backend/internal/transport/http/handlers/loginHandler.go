@@ -1,16 +1,17 @@
 package handlers
 
 import (
-	"eshbuket/models"
-	"eshbuket/services"
+	"eshbuket/internal/transport/http/dto"
 	"net/http"
+
+	"eshbuket/internal/service/auth"
 
 	"github.com/gin-gonic/gin"
 )
 
 // POST /api/login - логин для админки
 func LoginHandler(c *gin.Context) {
-	var req models.LoginRequest
+	var req dto.LoginRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(400, gin.H{"error": "invalid request"})
@@ -26,13 +27,12 @@ func LoginHandler(c *gin.Context) {
 	Далее при каждом запросе на данный эндпоинт идет проверка через middleware, и, в случае если сессия активна, то пользователя пропускает в
 	админ панель.*/
 
-	auth := services.NewAuthService()
 	if !auth.Authenticate(req.Login, req.Password) {
 		c.JSON(401, gin.H{"error": "Неверно введен логин и/или пароль"})
 		return
 	}
 
-	sessionID := auth.CreateSession(req)
+	sessionID := auth.CreateSession(req.Login)
 
 	c.SetCookie(
 		"session_id",

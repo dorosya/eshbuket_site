@@ -1,7 +1,7 @@
-package services
+package auth
 
 import (
-	models "eshbuket/models"
+	"eshbuket/internal/Domain/models"
 	"os"
 	"time"
 
@@ -9,18 +9,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type AuthService interface {
-	Authenticate(login, password string) bool
-	CreateSession(req models.LoginRequest) string
-}
-
-type authService struct{}
-
-func NewAuthService() AuthService {
-	return &authService{}
-}
-
-func (s *authService) Authenticate(login string, password string) bool {
+func Authenticate(login string, password string) bool {
 	Storedhash := os.Getenv("ADMIN_PASSWORD_HASH")
 	Adminlogin := os.Getenv("ADMIN_LOGIN")
 
@@ -32,10 +21,11 @@ func (s *authService) Authenticate(login string, password string) bool {
 	return err == nil
 }
 
-func (s *authService) CreateSession(req models.LoginRequest) string {
+// TODO: JWT AUTH
+func CreateSession(Login string) string {
 	var sessionID = uuid.NewString()
 	models.Sessions[sessionID] = models.Session{
-		Username: req.Login,
+		Username: Login,
 		Expires:  time.Now().Add(1 * time.Hour),
 	}
 	return sessionID

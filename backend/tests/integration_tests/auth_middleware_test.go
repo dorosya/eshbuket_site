@@ -1,7 +1,7 @@
 package handlers_test
 
 import (
-	"eshbuket/middleware"
+	"eshbuket/internal/middleware"
 	"net/http"
 	"net/http/httptest"
 	"testing"

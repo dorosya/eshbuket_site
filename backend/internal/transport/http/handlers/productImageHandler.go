@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	db "eshbuket/database"
+	db "eshbuket/internal/repository/postgres"
 	"fmt"
 	"io"
 	"log"

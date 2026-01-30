@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"eshbuket/middleware"
+	"eshbuket/internal/transport/http/middleware"
 
 	"github.com/gin-gonic/gin"
 )

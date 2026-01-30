@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"database/sql"
-	db "eshbuket/database"
-	"eshbuket/models"
+	db "eshbuket/internal/repository/postgres"
+	models "eshbuket/internal/transport/http/dto"
 	"fmt"
 	"log"
 	"net/http"

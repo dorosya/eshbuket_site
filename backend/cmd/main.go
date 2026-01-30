@@ -1,9 +1,10 @@
 package main
 
 import (
-	db "eshbuket/database"
-	"eshbuket/handlers"
-	"eshbuket/models"
+	"eshbuket/internal/repository/postgres"
+	"eshbuket/internal/service/order"
+	"eshbuket/internal/transport/http/dto"
+	"eshbuket/internal/transport/http/handlers"
 	"log"
 	"os"
 
@@ -16,14 +17,19 @@ func main() {
 	dbUser := os.Getenv("DB_USER")
 	dbPassword := os.Getenv("DB_PASSWORD")
 	dbName := os.Getenv("DB_NAME")
-	db.Connect(dbHost, dbPort, dbUser, dbPassword, dbName)
-	err := db.InitSchema(db.DB)
+	db := postgres.Connect(dbHost, dbPort, dbUser, dbPassword, dbName)
+
+	OrderRepo := postgres.NewOrderRepository(db)
+	OrderService := order.NewOrderService(OrderRepo)
+	OrderHandler := handlers.NewOrderHandler(OrderService)
+
+	err := postgres.InitSchema()
 	if err != nil {
 		log.Println("Не получилось создать таблицы для ДБ")
 	}
 
 	env := os.Getenv("APP_ENV")
-	router := models.NewRouter(models.Config{Env: env})
+	router := dto.NewRouter(dto.Config{Env: env})
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
 	router.Use(cors.New(config))

@@ -7,9 +7,9 @@ import (
 	"os"
 	"testing"
 
-	db "eshbuket/database"
-	"eshbuket/handlers"
-	models "eshbuket/models"
+	db "eshbuket/internal/database"
+	"eshbuket/internal/handlers"
+	models "eshbuket/internal/models"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"

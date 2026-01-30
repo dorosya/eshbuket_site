@@ -7,7 +7,7 @@ import (
 	"os"
 	"testing"
 
-	"eshbuket/handlers"
+	"eshbuket/internal/handlers"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
