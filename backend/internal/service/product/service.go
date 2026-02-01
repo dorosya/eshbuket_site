@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"eshbuket/internal/domain/models"
+	"eshbuket/internal/Domain/models"
 	"eshbuket/internal/transport/http/dto"
 	"fmt"
 	"log"
@@ -39,6 +39,7 @@ func (service *ProductService) ProductGetService(ctx context.Context, category s
 			return nil, err
 		}
 		p.ID = int(id.Int64)
+		//лучше переделать под Decimal
 		p.Price = int(price.Int64)
 		if imagePath.Valid && imagePath.String != "" {
 			p.ImageURL = "/api/products/" + fmt.Sprint(p.ID) + "/image"

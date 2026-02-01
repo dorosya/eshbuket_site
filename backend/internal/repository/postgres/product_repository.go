@@ -17,7 +17,7 @@ func NewProductRepository(db *sql.DB) *ProductRepository {
 }
 
 func (repo *ProductRepository) FindProducts(ctx context.Context, category string) (*sql.Rows, error) {
-	rows, err := db.Query(`
+	rows, err := db.QueryContext(ctx, `
 			SELECT id, name, price, category, image_path
 			FROM products
 			WHERE ($1 = '' OR category = $1)
@@ -31,8 +31,8 @@ func (repo *ProductRepository) FindProducts(ctx context.Context, category string
 }
 
 func (repo *ProductRepository) InsertProduct(ctx context.Context, name string, price string, category string) error {
-	_, err := repo.db.Exec(
-		"INSERT INTO Products (name, price, category) VALUES ($1, $2, $3)",
+	_, err := repo.db.ExecContext(ctx,
+		"INSERT INTO products (name, price, category) VALUES ($1, $2, $3)",
 		name, price, category,
 	)
 	if err != nil {
