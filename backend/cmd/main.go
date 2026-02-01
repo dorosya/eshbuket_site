@@ -2,7 +2,6 @@ package main
 
 import (
 	"eshbuket/internal/repository/postgres"
-	"eshbuket/internal/service/order"
 	"eshbuket/internal/transport/http/dto"
 	"eshbuket/internal/transport/http/handlers"
 	"log"
@@ -19,10 +18,6 @@ func main() {
 	dbName := os.Getenv("DB_NAME")
 	db := postgres.Connect(dbHost, dbPort, dbUser, dbPassword, dbName)
 
-	OrderRepo := NewOrderRepository(db)
-	OrderService := order.NewOrderService(OrderRepo)
-	OrderHandler := handlers.NewOrderHandler(OrderService)
-
 	err := postgres.InitSchema()
 	if err != nil {
 		log.Println("Не получилось создать таблицы для ДБ")
@@ -33,7 +28,7 @@ func main() {
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
 	router.Use(cors.New(config))
-	handlers.RegisterRoutes(router)
+	handlers.RegisterRoutes(router, db)
 
 	// Подгрузка фронтенда через
 	// router.Static("/static", "./frontend")

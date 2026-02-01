@@ -16,7 +16,7 @@ func NewOrderRepository(db *sql.DB) *OrderRepository {
 	}
 }
 
-func (repo *OrderRepository) BeginTx() (*sql.Tx, error) {
+func (repo *OrderRepository) BeginTx(ctx context.Context) (*sql.Tx, error) {
 	tx, err := repo.db.Begin()
 	if err != nil {
 		return nil, errors.New("Repository error: failed to create transaction")

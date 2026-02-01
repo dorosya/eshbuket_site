@@ -8,5 +8,3 @@ type Session struct {
 	Username string
 	Expires  time.Time
 }
-
-var Sessions = make(map[string]Session)

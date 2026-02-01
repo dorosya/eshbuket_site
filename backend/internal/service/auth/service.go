@@ -1,32 +1,49 @@
 package auth
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"eshbuket/internal/Domain/models"
+	store "eshbuket/internal/repository/Store"
 	"os"
 	"time"
 
-	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func Authenticate(login string, password string) bool {
+type AuthService struct {
+	store *store.SessionStore
+}
+
+func NewAuthService(store *store.SessionStore) *AuthService {
+	return &AuthService{store}
+}
+func (s *AuthService) CreateSession(username string) string {
+	id := generateSessionID()
+	s.store.Set(id, models.Session{
+		Username: username,
+		Expires:  time.Now().Add(1 * time.Hour),
+	})
+	return id
+}
+
+func (service *AuthService) Authenticate(login string, password string) bool {
 	Storedhash := os.Getenv("ADMIN_PASSWORD_HASH")
 	Adminlogin := os.Getenv("ADMIN_LOGIN")
-
 	if login != Adminlogin {
 		return false
 	}
-
 	err := bcrypt.CompareHashAndPassword([]byte(Storedhash), []byte(password))
 	return err == nil
 }
 
-// TODO: JWT AUTH
-func CreateSession(Login string) string {
-	var sessionID = uuid.NewString()
-	models.Sessions[sessionID] = models.Session{
-		Username: Login,
-		Expires:  time.Now().Add(1 * time.Hour),
-	}
-	return sessionID
+func (s *AuthService) ValidateSession(id string) bool {
+	_, ok := s.store.Get(id)
+	return ok
+}
+
+func generateSessionID() string {
+	b := make([]byte, 32)
+	rand.Read(b)
+	return hex.EncodeToString(b)
 }

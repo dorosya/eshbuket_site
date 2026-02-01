@@ -9,8 +9,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type LoginHandler struct {
+	service auth.AuthService
+}
+
+func NewLoginHandler(LS auth.AuthService) *LoginHandler {
+	return &LoginHandler{LS}
+}
+
 // POST /api/login - логин для админки
-func LoginHandler(c *gin.Context) {
+func (service *LoginHandler) LoginHandler(c *gin.Context) {
 	var req dto.LoginRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -27,12 +35,12 @@ func LoginHandler(c *gin.Context) {
 	Далее при каждом запросе на данный эндпоинт идет проверка через middleware, и, в случае если сессия активна, то пользователя пропускает в
 	админ панель.*/
 
-	if !auth.Authenticate(req.Login, req.Password) {
+	if service.service.Authenticate(req.Login, req.Password) {
 		c.JSON(401, gin.H{"error": "Неверно введен логин и/или пароль"})
 		return
 	}
 
-	sessionID := auth.CreateSession(req.Login)
+	sessionID := service.service.CreateSession(req.Login)
 
 	c.SetCookie(
 		"session_id",
