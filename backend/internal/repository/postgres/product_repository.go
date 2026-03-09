@@ -17,7 +17,7 @@ func NewProductRepository(db *sql.DB) *ProductRepository {
 }
 
 func (repo *ProductRepository) FindProducts(ctx context.Context, category string) (*sql.Rows, error) {
-	rows, err := db.QueryContext(ctx, `
+	rows, err := repo.db.QueryContext(ctx, `
 			SELECT id, name, price, category, image_path
 			FROM products
 			WHERE ($1 = '' OR category = $1)

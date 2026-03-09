@@ -2,7 +2,7 @@ package dto
 
 type Product struct {
 	ProductID int `json:"product_id" binding:"required"`
-	Quantity  int `json:"quantity" binding:"required"`
+	Quantity  int `json:"quantity" binding:"required,gt=0"`
 }
 
 type OrderRequest struct {

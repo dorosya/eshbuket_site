@@ -36,7 +36,7 @@ func (service *LoginHandler) LoginHandler(c *gin.Context) {
 	Далее при каждом запросе на данный эндпоинт идет проверка через middleware, и, в случае если сессия активна, то пользователя пропускает в
 	админ панель.*/
 
-	if service.service.Authenticate(req.Login, req.Password) {
+	if !service.service.Authenticate(req.Login, req.Password) {
 		c.JSON(401, gin.H{"error": "Неверно введен логин и/или пароль"})
 		return
 	}

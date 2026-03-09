@@ -31,6 +31,7 @@ func (handler *OrderHandler) OrdersHandler(c *gin.Context) {
 	orderID, totalPrice, err := handler.service.OrderServiceFunc(c.Request.Context(), req)
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
+		return
 	}
 	c.JSON(201, gin.H{"order_id": orderID, "total_price": totalPrice})
 }
