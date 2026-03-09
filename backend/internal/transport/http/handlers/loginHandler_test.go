@@ -82,3 +82,20 @@ func TestLoginHandler_Success(t *testing.T) {
 	}
 }
 
+func TestShouldUseSecureCookie(t *testing.T) {
+	t.Run("env local uses insecure", func(t *testing.T) {
+		t.Setenv("COOKIE_SECURE", "")
+		t.Setenv("APP_ENV", "local")
+		if shouldUseSecureCookie() {
+			t.Fatal("expected insecure cookie for local env")
+		}
+	})
+
+	t.Run("explicit override wins", func(t *testing.T) {
+		t.Setenv("APP_ENV", "local")
+		t.Setenv("COOKIE_SECURE", "true")
+		if !shouldUseSecureCookie() {
+			t.Fatal("expected secure cookie when COOKIE_SECURE=true")
+		}
+	})
+}

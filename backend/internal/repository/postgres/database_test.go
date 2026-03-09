@@ -90,4 +90,3 @@ func TestInitSchema(t *testing.T) {
 		}
 	})
 }
-

@@ -1,11 +1,13 @@
 package handlers
 
 import (
+	"eshbuket/internal/service/auth"
 	"eshbuket/internal/transport/http/dto"
 	"log"
 	"net/http"
-
-	"eshbuket/internal/service/auth"
+	"os"
+	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,34 +16,25 @@ type LoginHandler struct {
 	service auth.AuthService
 }
 
-func NewLoginHandler(LS auth.AuthService) *LoginHandler {
-	return &LoginHandler{LS}
+func NewLoginHandler(ls auth.AuthService) *LoginHandler {
+	return &LoginHandler{ls}
 }
 
-// POST /api/login - логин для админки
-func (service *LoginHandler) LoginHandler(c *gin.Context) {
+// POST /api/login
+func (h *LoginHandler) LoginHandler(c *gin.Context) {
 	var req dto.LoginRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(400, gin.H{"error": "invalid request"})
-		return
-	}
-	/* Логика реализации следующая:
-	Окно ввода логина пароля. Отправляется пост запрос с содержанием header {
-	 login: "admin";
-	password: "123";
-	}
-	Оно сверяется с реальными данными, далее, если они корректны, создаёт новую сессию, которая сохраняется в памяти
-	(в идеале redis, но думаю и в самой памяти тоже пойдет на время пока я не прикручу JWT), а так же в куки.
-	Далее при каждом запросе на данный эндпоинт идет проверка через middleware, и, в случае если сессия активна, то пользователя пропускает в
-	админ панель.*/
-
-	if !service.service.Authenticate(req.Login, req.Password) {
-		c.JSON(401, gin.H{"error": "Неверно введен логин и/или пароль"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
 		return
 	}
 
-	sessionID, err := service.service.CreateSession(req.Login)
+	if !h.service.Authenticate(req.Login, req.Password) {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Неверно введен логин и/или пароль"})
+		return
+	}
+
+	sessionID, err := h.service.CreateSession(req.Login)
 	if err != nil {
 		log.Panic(err)
 		return
@@ -50,11 +43,27 @@ func (service *LoginHandler) LoginHandler(c *gin.Context) {
 	c.SetCookie(
 		"session_id",
 		sessionID,
-		3600, // время жизни в секундах
+		3600,
 		"/",
-		"",   // домен
-		true, // Secure (только HTTPS)
-		true, // HttpOnly
+		"",
+		shouldUseSecureCookie(),
+		true,
 	)
 	c.JSON(http.StatusOK, gin.H{"message": "Авторизирован успешно"})
+}
+
+func shouldUseSecureCookie() bool {
+	if raw := strings.TrimSpace(os.Getenv("COOKIE_SECURE")); raw != "" {
+		if v, err := strconv.ParseBool(raw); err == nil {
+			return v
+		}
+	}
+
+	env := strings.ToLower(strings.TrimSpace(os.Getenv("APP_ENV")))
+	switch env {
+	case "local", "dev", "development", "test":
+		return false
+	default:
+		return true
+	}
 }

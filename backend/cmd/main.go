@@ -18,9 +18,8 @@ func main() {
 	dbName := os.Getenv("DB_NAME")
 	db := postgres.Connect(dbHost, dbPort, dbUser, dbPassword, dbName)
 
-	err := postgres.InitSchema()
-	if err != nil {
-		log.Println("Не получилось создать таблицы для ДБ")
+	if err := postgres.RunMigrations(db, os.Getenv("MIGRATIONS_DIR")); err != nil {
+		log.Fatalf("failed to run DB migrations: %v", err)
 	}
 
 	env := os.Getenv("APP_ENV")
@@ -30,12 +29,8 @@ func main() {
 	router.Use(cors.New(config))
 	handlers.RegisterRoutes(router, db)
 
-	// Подгрузка фронтенда через
-	// router.Static("/static", "./frontend")
-	// router.GET("/", func(c *gin.Context) {
-	// 	c.File("./frontend/index.html")
-	// })
 	if err := router.Run(); err != nil {
 		log.Fatal(err)
 	}
 }
+
