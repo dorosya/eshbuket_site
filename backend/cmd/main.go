@@ -6,6 +6,8 @@ import (
 	"eshbuket/internal/transport/http/handlers"
 	"log"
 	"os"
+	"strings"
+	"time"
 
 	"github.com/gin-contrib/cors"
 )
@@ -24,8 +26,22 @@ func main() {
 
 	env := os.Getenv("APP_ENV")
 	router := dto.NewRouter(dto.Config{Env: env})
-	config := cors.DefaultConfig()
-	config.AllowAllOrigins = true
+	config := cors.Config{
+		AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders: []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		MaxAge:       12 * time.Hour,
+	}
+	origins := parseOrigins(os.Getenv("FRONTEND_ORIGINS"))
+	if len(origins) == 0 {
+		origins = []string{
+			"http://localhost:5500",
+			"http://127.0.0.1:5500",
+			"http://localhost:3000",
+			"http://127.0.0.1:3000",
+		}
+	}
+	config.AllowOrigins = origins
+	config.AllowCredentials = true
 	router.Use(cors.New(config))
 	handlers.RegisterRoutes(router, db)
 
@@ -34,3 +50,18 @@ func main() {
 	}
 }
 
+func parseOrigins(raw string) []string {
+	if strings.TrimSpace(raw) == "" {
+		return nil
+	}
+
+	parts := strings.Split(raw, ",")
+	origins := make([]string, 0, len(parts))
+	for _, p := range parts {
+		v := strings.TrimSpace(p)
+		if v != "" {
+			origins = append(origins, v)
+		}
+	}
+	return origins
+}

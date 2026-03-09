@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -9,12 +9,18 @@
 <body>
   <main class="container">
     <h1>Eshbuket Test UI</h1>
-    <p class="hint">Минимальный фронт для проверки API бэкенда.</p>
+    <p class="hint">Минимальная панель для проверки всех текущих API-хендлеров и работы БД.</p>
 
     <section class="card">
       <h2>Backend URL</h2>
       <input id="baseUrl" type="text" value="" placeholder="http://localhost:8080 (optional)" />
       <small>Оставь пустым при запуске через nginx-прокси (`/api`).</small>
+    </section>
+
+    <section class="card">
+      <h2>Quick Smoke Test</h2>
+      <p class="muted">Проверяет доступность backend + чтение из БД через `GET /api/products`.</p>
+      <button id="smokeBtn" type="button">Run Smoke Test</button>
     </section>
 
     <section class="card">
@@ -28,7 +34,20 @@
 
     <section class="card">
       <h2>Products</h2>
-      <button id="loadProductsBtn" type="button">GET /api/products</button>
+      <form id="productsFilterForm">
+        <input id="productsCategory" type="text" placeholder="category filter (optional)" />
+        <button id="loadProductsBtn" type="submit">GET /api/products</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Create Product (auth required)</h2>
+      <form id="createProductForm">
+        <input id="productName" type="text" placeholder="name" required />
+        <input id="productPrice" type="number" min="1" placeholder="price (RUB)" required />
+        <input id="productCategory" type="text" placeholder="category" />
+        <button type="submit">POST /api/products</button>
+      </form>
     </section>
 
     <section class="card">
@@ -40,6 +59,22 @@
         <input id="quantity" type="number" min="1" value="1" required />
         <button type="submit">POST /api/orders</button>
       </form>
+    </section>
+
+    <section class="card">
+      <h2>Product Image (auth required for upload)</h2>
+      <form id="uploadImageForm">
+        <input id="uploadImageProductId" type="number" min="1" placeholder="product id" required />
+        <input id="productImageFile" type="file" accept="image/*" required />
+        <button type="submit">POST /api/products/:id/image</button>
+      </form>
+
+      <form id="viewImageForm">
+        <input id="viewImageProductId" type="number" min="1" placeholder="product id" required />
+        <button type="submit">GET /api/products/:id/image</button>
+      </form>
+
+      <img id="imagePreview" alt="Product image preview" class="preview hidden" />
     </section>
 
     <section class="card">

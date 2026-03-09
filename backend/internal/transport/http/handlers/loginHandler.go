@@ -1,4 +1,4 @@
-package handlers
+﻿package handlers
 
 import (
 	"eshbuket/internal/service/auth"
@@ -29,16 +29,17 @@ func (h *LoginHandler) LoginHandler(c *gin.Context) {
 	}
 
 	if !h.service.Authenticate(req.Login, req.Password) {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Неверно введен логин и/или пароль"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid login and/or password"})
 		return
 	}
 
 	sessionID, err := h.service.CreateSession(req.Login)
 	if err != nil {
-		c.JSON(500, gin.H{"error": "Не удалось создать новую сессию"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create session"})
 		return
 	}
 
+	c.SetSameSite(cookieSameSiteMode())
 	c.SetCookie(
 		"session_id",
 		sessionID,
@@ -48,7 +49,7 @@ func (h *LoginHandler) LoginHandler(c *gin.Context) {
 		shouldUseSecureCookie(),
 		true,
 	)
-	c.JSON(http.StatusOK, gin.H{"message": "Авторизирован успешно"})
+	c.JSON(http.StatusOK, gin.H{"message": "authorized"})
 }
 
 func shouldUseSecureCookie() bool {
@@ -64,5 +65,16 @@ func shouldUseSecureCookie() bool {
 		return false
 	default:
 		return true
+	}
+}
+
+func cookieSameSiteMode() http.SameSite {
+	switch strings.ToLower(strings.TrimSpace(os.Getenv("COOKIE_SAMESITE"))) {
+	case "strict":
+		return http.SameSiteStrictMode
+	case "none":
+		return http.SameSiteNoneMode
+	default:
+		return http.SameSiteLaxMode
 	}
 }
