@@ -13,7 +13,7 @@ func NewOrderService(repo OrderRepository) *OrderService {
 	return &OrderService{repo}
 }
 
-func (service *OrderService) OrderServiceFunc(ctx context.Context, req dto.OrderRequest) (orderid int, totalprice int, err error) {
+func (service *OrderService) OrderServiceFunc(ctx context.Context, req dto.OrderRequest) (orderID int, totalPriceCents int64, err error) {
 	tx, err := service.repo.BeginTx(ctx)
 	if err != nil {
 		return 0, 0, err
@@ -26,29 +26,29 @@ func (service *OrderService) OrderServiceFunc(ctx context.Context, req dto.Order
 	}()
 
 	for _, p := range req.Products {
-		var price int
-		price, err = service.repo.GetProductPrice(ctx, tx, p.ProductID)
+		var priceCents int64
+		priceCents, err = service.repo.GetProductPrice(ctx, tx, p.ProductID)
 		if err != nil {
 			return
 		}
-
-		totalprice += price * p.Quantity
+		totalPriceCents += priceCents * int64(p.Quantity)
 	}
 
-	// Вставка заказа
-	orderid, err = service.repo.CreateOrder(ctx, tx, req.ContactData, req.Comment, totalprice)
+	orderID, err = service.repo.CreateOrder(ctx, tx, req.ContactData, req.Comment, totalPriceCents)
 	if err != nil {
 		return
 	}
-	// Вставляем записи в order_products. Подтверждает транзакцию
+
 	for _, product := range req.Products {
-		err = service.repo.AddOrderProduct(ctx, tx, orderid, product.ProductID, product.Quantity)
+		err = service.repo.AddOrderProduct(ctx, tx, orderID, product.ProductID, product.Quantity)
 		if err != nil {
 			return
 		}
 	}
+
 	if err = tx.Commit(); err != nil {
 		return
 	}
-	return orderid, totalprice, nil
+
+	return orderID, totalPriceCents, nil
 }

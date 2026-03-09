@@ -3,12 +3,11 @@ package product
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"eshbuket/internal/Domain/models"
+	"eshbuket/internal/Domain/money"
 	"eshbuket/internal/transport/http/dto"
 	"fmt"
 	"log"
-	"strconv"
 )
 
 type ProductService struct {
@@ -33,14 +32,13 @@ func (service *ProductService) ProductGetService(ctx context.Context, category s
 	products := []models.Product{}
 	for rows.Next() {
 		var p models.Product
-		var price, id sql.NullInt64
+		var priceCents, id sql.NullInt64
 		var imagePath sql.NullString
-		if err := rows.Scan(&id, &p.Name, &price, &p.Category, &imagePath); err != nil {
+		if err := rows.Scan(&id, &p.Name, &priceCents, &p.Category, &imagePath); err != nil {
 			return nil, err
 		}
 		p.ID = int(id.Int64)
-		//лучше переделать под Decimal
-		p.Price = int(price.Int64)
+		p.Price = priceCents.Int64
 		if imagePath.Valid && imagePath.String != "" {
 			p.ImageURL = "/api/products/" + fmt.Sprint(p.ID) + "/image"
 		} else {
@@ -56,15 +54,11 @@ func (service *ProductService) ProductGetService(ctx context.Context, category s
 }
 
 func (service *ProductService) ProductPostService(ctx context.Context, req dto.ProductRequest) error {
-	price, err := strconv.Atoi(req.Price)
+	priceCents, err := money.ParseToCents(req.Price)
 	if err != nil {
-		return errors.New("invalid price format")
+		return err
 	}
-	if price <= 0 {
-		return errors.New("price must be positive")
-	}
-	err = service.repo.InsertProduct(ctx, req.Name, req.Price, req.Category)
-	if err != nil {
+	if err := service.repo.InsertProduct(ctx, req.Name, priceCents, req.Category); err != nil {
 		return err
 	}
 	return nil

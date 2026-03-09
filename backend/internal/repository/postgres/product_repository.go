@@ -30,10 +30,10 @@ func (repo *ProductRepository) FindProducts(ctx context.Context, category string
 	return rows, err
 }
 
-func (repo *ProductRepository) InsertProduct(ctx context.Context, name string, price string, category string) error {
+func (repo *ProductRepository) InsertProduct(ctx context.Context, name string, priceCents int64, category string) error {
 	_, err := repo.db.ExecContext(ctx,
 		"INSERT INTO products (name, price, category) VALUES ($1, $2, $3)",
-		name, price, category,
+		name, priceCents, category,
 	)
 	if err != nil {
 		return errors.New("repository error: " + err.Error())

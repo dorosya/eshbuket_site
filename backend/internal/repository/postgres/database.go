@@ -46,4 +46,3 @@ func RunMigrations(db *sql.DB, migrationsDir string) error {
 
 	return nil
 }
-

@@ -25,8 +25,8 @@ func (repo *OrderRepository) BeginTx(ctx context.Context) (*sql.Tx, error) {
 	return tx, nil
 }
 
-func (repo *OrderRepository) GetProductPrice(ctx context.Context, tx *sql.Tx, productID int) (int, error) {
-	var price int
+func (repo *OrderRepository) GetProductPrice(ctx context.Context, tx *sql.Tx, productID int) (int64, error) {
+	var price int64
 	err := tx.QueryRowContext(ctx, "SELECT price FROM products WHERE id=$1", productID).Scan(&price)
 	if err != nil {
 		return 0, errors.New("repository error: failed to find a product in order")
@@ -34,11 +34,11 @@ func (repo *OrderRepository) GetProductPrice(ctx context.Context, tx *sql.Tx, pr
 	return price, nil
 }
 
-func (repo *OrderRepository) CreateOrder(ctx context.Context, tx *sql.Tx, contactData string, comment string, totalPrice int) (int, error) {
+func (repo *OrderRepository) CreateOrder(ctx context.Context, tx *sql.Tx, contactData string, comment string, totalPriceCents int64) (int, error) {
 	var orderID int
 	err := tx.QueryRowContext(ctx,
 		"INSERT INTO orders (contact_data, comment, total_price) VALUES ($1, $2, $3) RETURNING id",
-		contactData, comment, totalPrice,
+		contactData, comment, totalPriceCents,
 	).Scan(&orderID)
 	if err != nil {
 		return 0, errors.New("repository error: failed to insert Order")

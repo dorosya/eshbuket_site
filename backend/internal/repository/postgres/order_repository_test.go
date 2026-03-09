@@ -78,8 +78,8 @@ func TestOrderRepository_GetProductPrice_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if price != 200 {
-		t.Fatalf("unexpected price: got %d want %d", price, 200)
+	if price != int64(200) {
+		t.Fatalf("unexpected price: got %d want %d", price, int64(200))
 	}
 
 	mock.ExpectRollback()
@@ -257,4 +257,3 @@ func TestOrderRepository_AddOrderProduct_Error(t *testing.T) {
 		t.Fatalf("unmet sqlmock expectations: %v", err)
 	}
 }
-

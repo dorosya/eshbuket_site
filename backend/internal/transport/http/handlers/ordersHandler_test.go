@@ -25,11 +25,11 @@ func (s *orderRepoStub) BeginTx(ctx context.Context) (*sql.Tx, error) {
 	return nil, nil
 }
 
-func (s *orderRepoStub) GetProductPrice(ctx context.Context, tx *sql.Tx, productID int) (int, error) {
+func (s *orderRepoStub) GetProductPrice(ctx context.Context, tx *sql.Tx, productID int) (int64, error) {
 	return 0, nil
 }
 
-func (s *orderRepoStub) CreateOrder(ctx context.Context, tx *sql.Tx, contactData string, comment string, totalPrice int) (int, error) {
+func (s *orderRepoStub) CreateOrder(ctx context.Context, tx *sql.Tx, contactData string, comment string, totalPriceCents int64) (int, error) {
 	return 0, nil
 }
 
@@ -93,4 +93,3 @@ func TestOrdersHandler_ServiceError_ReturnsSingle500Response(t *testing.T) {
 		t.Fatalf("unexpected success payload in error response: %s", body)
 	}
 }
-

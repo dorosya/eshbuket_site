@@ -12,14 +12,14 @@ type OrderRepository interface {
 		ctx context.Context,
 		tx *sql.Tx,
 		productID int,
-	) (int, error)
+	) (int64, error)
 
 	CreateOrder(
 		ctx context.Context,
 		tx *sql.Tx,
 		contactData string,
 		comment string,
-		totalPrice int,
+		totalPriceCents int64,
 	) (int, error)
 
 	AddOrderProduct(

@@ -80,10 +80,10 @@ func TestProductRepository_InsertProduct_Success(t *testing.T) {
 
 	repo := NewProductRepository(sqlDB)
 	mock.ExpectExec(regexp.QuoteMeta("INSERT INTO products (name, price, category) VALUES ($1, $2, $3)")).
-		WithArgs("Rose", "100", "flowers").
+		WithArgs("Rose", int64(10000), "flowers").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	err = repo.InsertProduct(context.Background(), "Rose", "100", "flowers")
+	err = repo.InsertProduct(context.Background(), "Rose", 10000, "flowers")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -102,10 +102,10 @@ func TestProductRepository_InsertProduct_Error(t *testing.T) {
 
 	repo := NewProductRepository(sqlDB)
 	mock.ExpectExec(regexp.QuoteMeta("INSERT INTO products (name, price, category) VALUES ($1, $2, $3)")).
-		WithArgs("Rose", "100", "flowers").
+		WithArgs("Rose", int64(10000), "flowers").
 		WillReturnError(errors.New("insert failed"))
 
-	err = repo.InsertProduct(context.Background(), "Rose", "100", "flowers")
+	err = repo.InsertProduct(context.Background(), "Rose", 10000, "flowers")
 	if err == nil {
 		t.Fatal("expected error")
 	}
@@ -117,4 +117,3 @@ func TestProductRepository_InsertProduct_Error(t *testing.T) {
 		t.Fatalf("unmet sqlmock expectations: %v", err)
 	}
 }
-
