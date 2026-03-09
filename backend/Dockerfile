@@ -9,7 +9,7 @@ COPY . .
 
 # COPY frontend ./frontend
 
-RUN go build -v -o server main.go
+RUN go build -v -o server ./cmd
 
 
 FROM alpine:latest
