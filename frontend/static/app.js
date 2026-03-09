@@ -12,7 +12,6 @@ async function apiRequest(path, options = {}) {
   const base = getBaseUrl();
   const url = `${base}${path}`;
   const resp = await fetch(url, {
-    credentials: "include",
     headers: { "Content-Type": "application/json" },
     ...options
   });
