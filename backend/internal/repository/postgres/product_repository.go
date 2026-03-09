@@ -24,7 +24,7 @@ func (repo *ProductRepository) FindProducts(ctx context.Context, category string
 		`, category)
 
 	if err != nil {
-		return rows, errors.New("Repository error: cannot find an item during scanning products rows")
+		return rows, errors.New("repository error: cannot find an item during scanning products rows")
 	}
 
 	return rows, err
