@@ -1,0 +1,16 @@
+name: deploy
+
+on:
+  workflow_run:
+    workflows: ["build"]
+    types: [completed]
+  
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy soon
+        run: echo "Deploy"
+
+  
