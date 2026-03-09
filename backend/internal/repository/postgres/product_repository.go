@@ -36,7 +36,7 @@ func (repo *ProductRepository) InsertProduct(ctx context.Context, name string, p
 		name, price, category,
 	)
 	if err != nil {
-		return errors.New("Repository error: " + err.Error())
+		return errors.New("repository error: " + err.Error())
 	}
 	return nil
 }
