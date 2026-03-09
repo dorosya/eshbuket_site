@@ -1,27 +1,28 @@
-services: 
+services:
   backend:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
-    expose: 
-      - "8080"
-    networks:
-      - app-network
     env_file:
-      - .env
+      - ./config/.env
+    environment:
+      MIGRATIONS_DIR: /app/migrations
     depends_on:
       postgres:
         condition: service_healthy
     volumes:
       - ./uploads:/app/uploads
+      - ./migrations:/app/migrations:ro
+    networks:
+      - app-network
 
   postgres:
     image: postgres:15
     restart: always
     env_file:
-      - .env
+      - ./config/.env
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -33,15 +34,6 @@ services:
       interval: 2s
       retries: 10
       start_period: 5s
-
-  nginx:
-    build: 
-      context: ../frontend
-      dockerfile: Dockerfile
-    ports: 
-      - "80:80"
-    depends_on:
-      - backend
 
 networks:
   app-network:
