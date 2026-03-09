@@ -19,7 +19,7 @@ type OrderRepository interface {
 		tx *sql.Tx,
 		contactData string,
 		comment string,
-		totalPriceCents int64,
+		totalPriceRub int64,
 	) (int, error)
 
 	AddOrderProduct(

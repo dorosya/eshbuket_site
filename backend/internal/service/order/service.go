@@ -13,7 +13,7 @@ func NewOrderService(repo OrderRepository) *OrderService {
 	return &OrderService{repo}
 }
 
-func (service *OrderService) OrderServiceFunc(ctx context.Context, req dto.OrderRequest) (orderID int, totalPriceCents int64, err error) {
+func (service *OrderService) OrderServiceFunc(ctx context.Context, req dto.OrderRequest) (orderID int, totalPriceRub int64, err error) {
 	tx, err := service.repo.BeginTx(ctx)
 	if err != nil {
 		return 0, 0, err
@@ -26,15 +26,15 @@ func (service *OrderService) OrderServiceFunc(ctx context.Context, req dto.Order
 	}()
 
 	for _, p := range req.Products {
-		var priceCents int64
-		priceCents, err = service.repo.GetProductPrice(ctx, tx, p.ProductID)
+		var priceRub int64
+		priceRub, err = service.repo.GetProductPrice(ctx, tx, p.ProductID)
 		if err != nil {
 			return
 		}
-		totalPriceCents += priceCents * int64(p.Quantity)
+		totalPriceRub += priceRub * int64(p.Quantity)
 	}
 
-	orderID, err = service.repo.CreateOrder(ctx, tx, req.ContactData, req.Comment, totalPriceCents)
+	orderID, err = service.repo.CreateOrder(ctx, tx, req.ContactData, req.Comment, totalPriceRub)
 	if err != nil {
 		return
 	}
@@ -50,5 +50,6 @@ func (service *OrderService) OrderServiceFunc(ctx context.Context, req dto.Order
 		return
 	}
 
-	return orderID, totalPriceCents, nil
+	return orderID, totalPriceRub, nil
 }
+

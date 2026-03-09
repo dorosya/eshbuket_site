@@ -34,11 +34,11 @@ func (repo *OrderRepository) GetProductPrice(ctx context.Context, tx *sql.Tx, pr
 	return price, nil
 }
 
-func (repo *OrderRepository) CreateOrder(ctx context.Context, tx *sql.Tx, contactData string, comment string, totalPriceCents int64) (int, error) {
+func (repo *OrderRepository) CreateOrder(ctx context.Context, tx *sql.Tx, contactData string, comment string, totalPriceRub int64) (int, error) {
 	var orderID int
 	err := tx.QueryRowContext(ctx,
 		"INSERT INTO orders (contact_data, comment, total_price) VALUES ($1, $2, $3) RETURNING id",
-		contactData, comment, totalPriceCents,
+		contactData, comment, totalPriceRub,
 	).Scan(&orderID)
 	if err != nil {
 		return 0, errors.New("repository error: failed to insert Order")

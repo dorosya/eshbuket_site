@@ -3,7 +3,6 @@ package handlers
 import (
 	"eshbuket/internal/service/auth"
 	"eshbuket/internal/transport/http/dto"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -36,7 +35,7 @@ func (h *LoginHandler) LoginHandler(c *gin.Context) {
 
 	sessionID, err := h.service.CreateSession(req.Login)
 	if err != nil {
-		log.Panic(err)
+		c.JSON(500, gin.H{"error": "Не удалось создать новую сессию"})
 		return
 	}
 
