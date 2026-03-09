@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eshbuket Frontend</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="container">
+    <h1>Eshbuket Test UI</h1>
+    <p class="hint">Минимальный фронт для проверки API бэкенда.</p>
+
+    <section class="card">
+      <h2>Backend URL</h2>
+      <input id="baseUrl" type="text" value="http://localhost:8080" />
+      <small>Для запуска через nginx-прокси можно поставить пустое значение или `/`.</small>
+    </section>
+
+    <section class="card">
+      <h2>Login</h2>
+      <form id="loginForm">
+        <input id="login" type="text" placeholder="login" value="admin" required />
+        <input id="password" type="password" placeholder="password" required />
+        <button type="submit">POST /api/login</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Products</h2>
+      <button id="loadProductsBtn" type="button">GET /api/products</button>
+    </section>
+
+    <section class="card">
+      <h2>Create Order</h2>
+      <form id="orderForm">
+        <input id="contactData" type="text" placeholder="contact data" required />
+        <input id="comment" type="text" placeholder="comment" />
+        <input id="productId" type="number" min="1" placeholder="product id" required />
+        <input id="quantity" type="number" min="1" value="1" required />
+        <button type="submit">POST /api/orders</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Response</h2>
+      <pre id="output">Waiting for request...</pre>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
