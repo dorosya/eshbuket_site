@@ -10,19 +10,14 @@ import (
 	"github.com/pressly/goose/v3"
 )
 
-var db *sql.DB
-
 func Connect(dbHost string, dbPort string, dbUser string, dbPassword string, dbName string) *sql.DB {
-	psqlInfo := BuildDSN(dbHost, dbPort, dbUser, dbPassword, dbName)
+	dsn := BuildDSN(dbHost, dbPort, dbUser, dbPassword, dbName)
 
-	var err error
-	db, err = sql.Open("postgres", psqlInfo)
+	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		log.Fatalf("failed to connect to DB: %v", err)
 	}
-
-	err = db.Ping()
-	if err != nil {
+	if err := db.Ping(); err != nil {
 		log.Fatalf("failed to ping DB: %v", err)
 	}
 
@@ -48,33 +43,7 @@ func RunMigrations(db *sql.DB, migrationsDir string) error {
 	if err := goose.Up(db, migrationsDir); err != nil {
 		return fmt.Errorf("run migrations: %w", err)
 	}
+
 	return nil
 }
 
-// Используется дл тестов.
-func InitSchema() error {
-	_, err := db.Exec(`
-		CREATE TABLE IF NOT EXISTS products (
-			id SERIAL PRIMARY KEY,
-			name TEXT NOT NULL,
-			price NUMERIC NOT NULL,
-			category TEXT,
-			image_path TEXT
-		);
-
-		CREATE TABLE IF NOT EXISTS orders (
-			id SERIAL PRIMARY KEY,
-			contact_data TEXT NOT NULL,
-			comment TEXT,
-			total_price NUMERIC NOT NULL
-		);
-
-		CREATE TABLE IF NOT EXISTS order_products (
-			order_id INT REFERENCES orders(id) ON DELETE CASCADE,
-			product_id INT REFERENCES products(id) ON DELETE CASCADE,
-			quantity INT NOT NULL,
-			PRIMARY KEY(order_id, product_id)
-		);
-	`)
-	return err
-}
