@@ -1,1 +1,1 @@
-[![Check](https://github.com/dorosya/eshbuket_site/actions/workflows/check.yaml/badge.svg)](https://github.com/dorosya/eshbuket_site/actions/workflows/check.yaml)
+[![Tests](https://github.com/dorosya/eshbuket_site/actions/workflows/check.yaml/badge.svg)](https://github.com/dorosya/eshbuket_site/actions/workflows/cicd.yaml)
