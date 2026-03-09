@@ -19,7 +19,7 @@ func NewOrderRepository(db *sql.DB) *OrderRepository {
 func (repo *OrderRepository) BeginTx(ctx context.Context) (*sql.Tx, error) {
 	tx, err := repo.db.Begin()
 	if err != nil {
-		return nil, errors.New("Repository error: failed to create transaction")
+		return nil, errors.New("repository error: failed to create transaction")
 	}
 
 	return tx, nil
@@ -29,7 +29,7 @@ func (repo *OrderRepository) GetProductPrice(ctx context.Context, tx *sql.Tx, pr
 	var price int
 	err := tx.QueryRowContext(ctx, "SELECT price FROM products WHERE id=$1", productID).Scan(&price)
 	if err != nil {
-		return 0, errors.New("Repository error: failed to find a product in order")
+		return 0, errors.New("repository error: failed to find a product in order")
 	}
 	return price, nil
 }
@@ -41,7 +41,7 @@ func (repo *OrderRepository) CreateOrder(ctx context.Context, tx *sql.Tx, contac
 		contactData, comment, totalPrice,
 	).Scan(&orderID)
 	if err != nil {
-		return 0, errors.New("Repository error: failed to insert Order")
+		return 0, errors.New("repository error: failed to insert Order")
 	}
 	return orderID, nil
 }

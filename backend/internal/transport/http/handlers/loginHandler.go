@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"eshbuket/internal/transport/http/dto"
+	"log"
 	"net/http"
 
 	"eshbuket/internal/service/auth"
@@ -40,7 +41,11 @@ func (service *LoginHandler) LoginHandler(c *gin.Context) {
 		return
 	}
 
-	sessionID := service.service.CreateSession(req.Login)
+	sessionID, err := service.service.CreateSession(req.Login)
+	if err != nil {
+		log.Panic(err)
+		return
+	}
 
 	c.SetCookie(
 		"session_id",

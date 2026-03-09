@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"eshbuket/internal/Domain/models"
 	store "eshbuket/internal/repository/Store"
+	"fmt"
 	"os"
 	"time"
 
@@ -18,13 +19,16 @@ type AuthService struct {
 func NewAuthService(store *store.SessionStore) *AuthService {
 	return &AuthService{store}
 }
-func (s *AuthService) CreateSession(username string) string {
-	id := generateSessionID()
+func (s *AuthService) CreateSession(username string) (string, error) {
+	id, err := generateSessionID()
+	if err != nil {
+		return "", err
+	}
 	s.store.Set(id, models.Session{
 		Username: username,
 		Expires:  time.Now().Add(1 * time.Hour),
 	})
-	return id
+	return id, nil
 }
 
 func (service *AuthService) Authenticate(login string, password string) bool {
@@ -42,8 +46,11 @@ func (s *AuthService) ValidateSession(id string) bool {
 	return ok
 }
 
-func generateSessionID() string {
+func generateSessionID() (string, error) {
 	b := make([]byte, 32)
-	rand.Read(b)
-	return hex.EncodeToString(b)
+	_, err := rand.Read(b)
+	if err != nil {
+		return "", fmt.Errorf("error during creating session id")
+	}
+	return hex.EncodeToString(b), nil
 }
